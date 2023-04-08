@@ -54,6 +54,12 @@
 #include <string.h>
 #include <stdio.h>
 
+/* Dummy implementations of AFL's deferred forkserver mode, in case we're
+ * building with a compiler that doesn't support it. */
+#ifndef __AFL_HAVE_MANUAL_CONTROL
+#define __AFL_INIT() do {} while(0)
+#endif
+
 static u8_t pktbuf[200000];
 static const u8_t *remfuzz_ptr; /* remaining fuzz pointer */
 static size_t     remfuzz_len;  /* remaining fuzz length  */
@@ -656,6 +662,9 @@ int lwip_fuzztest(int argc, char** argv, enum lwip_fuzz_type type, u32_t test_ap
     udp_bind(udp_server_pcb, IP_ANY_TYPE, udp_local_port);
     udp_recv(udp_server_pcb, udp_server_recv, NULL);
   }
+
+  /* After input-independent initialization, perform deferred forkserver initialization for AFL */
+  __AFL_INIT();
 
   if(argc > 1) {
     FILE* f;
