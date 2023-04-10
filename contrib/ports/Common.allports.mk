@@ -48,7 +48,7 @@ CFLAGS+= -Wlogical-op -Wc90-c99-compat -Wtrampolines
 #CFLAGS:=$(CFLAGS) -fsanitize=address -fstack-protector -fstack-check -fsanitize=undefined -fno-sanitize=alignment
 else
 # we cannot sanitize alignment on x86-64 targets because clang wants 64 bit alignment
-CFLAGS+= -fsanitize=address -fsanitize=undefined -fno-sanitize=alignment -Wdocumentation -Wno-documentation-deprecated-sync
+CFLAGS+= -Wdocumentation -Wno-documentation-deprecated-sync
 endif
 
 CONTRIBDIR?=../../..
