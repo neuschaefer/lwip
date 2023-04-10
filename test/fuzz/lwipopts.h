@@ -32,6 +32,9 @@
 #ifndef LWIP_HDR_LWIPOPTS_H__
 #define LWIP_HDR_LWIPOPTS_H__
 
+#define MEM_USE_POOLS 0
+#define MEM_LIBC_MALLOC 1
+
 #define MEMP_NUM_SYS_TIMEOUT    17
 #define LWIP_FUZZ_SYS_NOW
 #define LWIP_RAND_FOR_FUZZ

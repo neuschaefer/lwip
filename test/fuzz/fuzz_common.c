@@ -226,7 +226,8 @@ static void input_pkts(enum lwip_fuzz_type type, struct netif *netif, const u8_t
 
     while (remfuzz_len > minlen) {
       // Put a limit on the number of packets. 100 should be enough.
-      if (pkt_number++ == 100)
+      // or 10 with timed packets.
+      if (pkt_number++ == ((type == LWIP_FUZZ_MULTIPACKET_TIME)? 10 : 100))
         break;
 
       u16_t frame_len;
