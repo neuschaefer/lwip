@@ -33,7 +33,7 @@ all compile: lwip_fuzz lwip_fuzz2 lwip_fuzz3
 .PHONY: all clean
 
 ifeq ($(origin CC), default)
-CC=afl-gcc
+CC=afl-clang-fast
 endif
 
 LDFLAGS=-lm
