@@ -222,8 +222,13 @@ static void input_pkts(enum lwip_fuzz_type type, struct netif *netif, const u8_t
   } else {
     const u16_t max_packet_size = 1514;
     const size_t minlen = sizeof(u16_t) + (type == LWIP_FUZZ_MULTIPACKET_TIME ? sizeof(u32_t) : 0);
+    int pkt_number = 0;
 
     while (remfuzz_len > minlen) {
+      // Put a limit on the number of packets. 100 should be enough.
+      if (pkt_number++ == 100)
+        break;
+
       u16_t frame_len;
 #ifdef LWIP_FUZZ_SYS_NOW
       u32_t external_delay = 0;
