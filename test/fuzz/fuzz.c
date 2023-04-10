@@ -35,5 +35,6 @@
 
 int main(int argc, char** argv)
 {
+  usleep(100000);
   return lwip_fuzztest(argc, argv, LWIP_FUZZ_SINGLE, LWIP_FUZZ_DEFAULT);
 }
