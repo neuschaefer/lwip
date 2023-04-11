@@ -88,7 +88,7 @@ class Multi:
 
     @classmethod
     def from_type1(self, data):
-        return self(Packet(data))
+        return self([Packet(data)])
 
     @classmethod
     def from_type2(self, data):

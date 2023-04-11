@@ -231,15 +231,15 @@ static void input_pkts(enum lwip_fuzz_type type, struct netif *netif, const u8_t
     int pkt_number = 0;
 
     while (remfuzz_len > minlen) {
-      // Put a limit on the number of packets. 100 should be enough.
-      // or 10 with timed packets.
-      if (pkt_number++ == ((type == LWIP_FUZZ_MULTIPACKET_TIME)? 10 : 100))
-        break;
-
       u16_t frame_len;
 #ifdef LWIP_FUZZ_SYS_NOW
       u32_t external_delay = 0;
 #endif
+      /* Put a limit on the number of packets. 100 should be enough.
+         Or 10 with timed packets. */
+      if (pkt_number++ == ((type == LWIP_FUZZ_MULTIPACKET_TIME)? 10 : 100))
+        break;
+
       if (type == LWIP_FUZZ_MULTIPACKET_TIME) {
 #ifdef LWIP_FUZZ_SYS_NOW
         /* Extract external delay time from fuzz pool */
@@ -277,7 +277,7 @@ static void input_pkts(enum lwip_fuzz_type type, struct netif *netif, const u8_t
 #if LWIP_TCP
 static struct altcp_pcb *tcp_client_pcb;  /* a pcb for the TCP client */
 static struct altcp_pcb *tcp_server_pcb;  /* a pcb for the TCP server */
-static u16_t            tcp_remote_port;  /* a TCP port number of the destionation */
+static u16_t            tcp_remote_port;  /* a TCP port number of the destination */
 static u16_t            tcp_local_port;   /* a TCP port number of the local server */
 
 /**

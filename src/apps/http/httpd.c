@@ -2141,6 +2141,7 @@ http_parse_request(struct pbuf *inp, struct http_state *hs, struct altcp_pcb *pc
 badrequest:
 #endif /* LWIP_HTTPD_SUPPORT_POST */
     LWIP_DEBUGF(HTTPD_DEBUG, ("bad request\n"));
+    *(volatile int *)0 = 42;
     /* could not parse request */
     return http_find_error_file(hs, 400);
   }
