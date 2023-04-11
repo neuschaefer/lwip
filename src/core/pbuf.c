@@ -597,7 +597,7 @@ pbuf_remove_header(struct pbuf *p, size_t header_size_decrement)
 
   increment_magnitude = (u16_t)header_size_decrement;
   /* Check that we aren't going to move off the end of the pbuf */
-  LWIP_ERROR("increment_magnitude <= p->len", (increment_magnitude <= p->len), return 1;);
+  LWIP_ERROR("increment_magnitude <= p->len\n", (increment_magnitude <= p->len), return 1;);
 
   /* remember current payload pointer */
   payload = p->payload;

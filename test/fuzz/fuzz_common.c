@@ -50,6 +50,8 @@
 #include "lwip/apps/snmp.h"
 #include "lwip/apps/lwiperf.h"
 #include "lwip/apps/mdns.h"
+#include "lwip/apps/tftp_server.h"
+#include "lwip/apps/netbiosns.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -585,6 +587,85 @@ udp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t 
 }
 #endif /* LWIP_UDP */
 
+static const char lorem_ipsum_content[] =
+"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+"incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis"
+"nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu"
+"fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in"
+"culpa qui officia deserunt mollit anim id est laborum.";
+
+struct tftp_file {
+  const char *base;
+  size_t size, offset;
+};
+
+static void*
+tftp_open(const char *fname, const char *mode, u8_t is_write)
+{
+  LWIP_UNUSED_ARG(mode);
+
+  if (is_write)
+    return NULL;
+
+  if (strcmp(fname, "l") == 0) {
+    struct tftp_file *f = calloc(1, sizeof(*f));
+    if (!f)
+      return NULL;
+
+    f->base = lorem_ipsum_content;
+    f->size = strlen(lorem_ipsum_content);
+    f->offset = 0;
+
+    return f;
+  }
+
+  return NULL;
+}
+
+static void
+tftp_close(void* handle)
+{
+  struct tftp_file *f = handle;
+  free(f);
+}
+
+static int
+tftp_read(void* handle, void* buf, int bytes)
+{
+  struct tftp_file *f = handle;
+
+  if (f->offset < f->size) {
+    size_t chunk = LWIP_MIN(f->size - f->offset, (size_t)bytes);
+
+    memcpy(buf, f->base + f->offset, chunk);
+    f->offset += chunk;
+    return chunk;
+  }
+
+  return -1;
+}
+
+static void
+tftp_error(void* handle, int err, const char* msg, int size)
+{
+  char message[100];
+
+  LWIP_UNUSED_ARG(handle);
+
+  memset(message, 0, sizeof(message));
+  MEMCPY(message, msg, LWIP_MIN(sizeof(message)-1, (size_t)size));
+
+  printf("TFTP error: %d (%s)\n", err, message);
+}
+
+static const struct tftp_context tftp = {
+  .open = tftp_open,
+  .close = tftp_close,
+  .read = tftp_read,
+  .error = tftp_error,
+};
+
 int lwip_fuzztest(int argc, char** argv, enum lwip_fuzz_type type, u32_t test_apps)
 {
   struct netif net_test;
@@ -625,6 +706,9 @@ int lwip_fuzztest(int argc, char** argv, enum lwip_fuzz_type type, u32_t test_ap
     mdns_resp_init();
     mdns_resp_add_netif(&net_test, "hostname");
     snmp_init();
+    netbiosns_init();
+    netbiosns_set_name("HOST");
+    tftp_init_server(&tftp);
   }
   if (test_apps & LWIP_FUZZ_TCP_CLIENT) {
     tcp_client_pcb = altcp_tcp_new_ip_type(IPADDR_TYPE_ANY);

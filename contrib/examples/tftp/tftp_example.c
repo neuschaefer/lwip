@@ -116,7 +116,7 @@ tftp_error(void* handle, int err, const char* msg, int size)
   memset(message, 0, sizeof(message));
   MEMCPY(message, msg, LWIP_MIN(sizeof(message)-1, (size_t)size));
 
-  printf("TFTP error: %d (%s)", err, message);
+  printf("TFTP error: %d (%s)\n", err, message);
 }
 
 static const struct tftp_context tftp = {

@@ -35,7 +35,7 @@
 #define MEM_USE_POOLS 0
 #define MEM_LIBC_MALLOC 1
 
-#define MEMP_NUM_SYS_TIMEOUT    17
+#define MEMP_NUM_SYS_TIMEOUT    20
 #define LWIP_FUZZ_SYS_NOW
 #define LWIP_RAND_FOR_FUZZ
 
@@ -83,5 +83,7 @@
 #define LWIP_SNMP                       1
 #define MIB2_STATS                      1
 #define LWIP_MDNS_RESPONDER             1
+
+#define LWIP_NETBIOS_RESPOND_NAME_QUERY 1
 
 #endif /* LWIP_HDR_LWIPOPTS_H__ */
