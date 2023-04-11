@@ -298,7 +298,11 @@ ip6_reass(struct pbuf *p)
   len = lwip_ntohs(ip6_current_header()->_plen);
   hdrdiff = (u8_t*)p->payload - (const u8_t*)ip6_current_header();
   LWIP_ASSERT("not a valid pbuf (ip6_input check missing?)", hdrdiff <= 0xFFFF);
-  LWIP_ASSERT("not a valid pbuf (ip6_input check missing?)", hdrdiff >= IP6_HLEN);
+  /*LWIP_ASSERT("not a valid pbuf (ip6_input check missing?)", hdrdiff >= IP6_HLEN);*/
+  if (hdrdiff < IP6_HLEN) {
+    IP6_FRAG_STATS_INC(ip6_frag.proterr);
+    goto nullreturn;
+  }
   hdrdiff -= IP6_HLEN;
   hdrdiff += IP6_FRAG_HLEN;
   if (hdrdiff > len) {
