@@ -552,7 +552,7 @@ http_write(struct altcp_pcb *pcb, const void *ptr, u16_t *length, u8_t apiflags)
   }
 #endif /* HTTPD_MAX_WRITE_LEN */
   do {
-    LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("Trying to send %d bytes\n", len));
+    LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("Trying to send %d bytes, max %d\n", len, max_len));
     err = altcp_write(pcb, ptr, len, apiflags);
     if (err == ERR_MEM) {
       if ((altcp_sndbuf(pcb) == 0) ||
@@ -2141,7 +2141,6 @@ http_parse_request(struct pbuf *inp, struct http_state *hs, struct altcp_pcb *pc
 badrequest:
 #endif /* LWIP_HTTPD_SUPPORT_POST */
     LWIP_DEBUGF(HTTPD_DEBUG, ("bad request\n"));
-    *(volatile int *)0 = 42;
     /* could not parse request */
     return http_find_error_file(hs, 400);
   }
@@ -2659,7 +2658,7 @@ http_accept(void *arg, struct altcp_pcb *pcb, err_t err)
   return ERR_OK;
 }
 
-static void
+void
 httpd_init_pcb(struct altcp_pcb *pcb, u16_t port)
 {
   err_t err;

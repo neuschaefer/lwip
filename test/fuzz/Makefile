@@ -29,7 +29,7 @@
 # Author: Adam Dunkels <adam@sics.se>
 #
 
-all compile: lwip_fuzz lwip_fuzz2 lwip_fuzz3
+all compile: lwip_fuzz lwip_fuzz2 lwip_fuzz3 lwip_fuzz_http
 .PHONY: all clean
 
 ifeq ($(origin CC), default)
@@ -47,7 +47,7 @@ include $(CONTRIBDIR)/ports/unix/Common.mk
 DEPFILES=.depend_fuzz .depend_lwip .depend_app
 
 clean:
-	rm -f *.o $(LWIPLIBCOMMON) $(APPLIB) lwip_fuzz lwip_fuzz2 lwip_fuzz3 *.s $(DEPFILES) *.core core
+	rm -f *.o $(LWIPLIBCOMMON) $(APPLIB) lwip_fuzz lwip_fuzz2 lwip_fuzz3 lwip_fuzz_http *.s $(DEPFILES) *.core core
 
 depend dep: $(DEPFILES)
 	@true
@@ -56,7 +56,7 @@ ifneq ($(MAKECMDGOALS),clean)
 include $(DEPFILES)
 endif
 
-.depend_fuzz: fuzz.c fuzz2.c fuzz3.c fuzz_common.c
+.depend_fuzz: fuzz.c fuzz2.c fuzz3.c fuzz_common.c fuzz_http.c
 	$(CCDEP) $(CFLAGS) -MM $^ > .depend_fuzz || rm -f .depend_fuzz
 .depend_lwip: $(LWIPFILES)
 	$(CCDEP) $(CFLAGS) -MM $^ > .depend_lwip || rm -f .depend_lwip
@@ -71,3 +71,6 @@ lwip_fuzz2: $(DEPFILES) $(LWIPLIBCOMMON) $(APPLIB) fuzz2.o fuzz_common.o
 
 lwip_fuzz3: $(DEPFILES) $(LWIPLIBCOMMON) $(APPLIB) fuzz3.o fuzz_common.o
 	$(CC) $(CFLAGS) -o lwip_fuzz3 fuzz3.o fuzz_common.o $(APPLIB) $(LWIPLIBCOMMON) $(LDFLAGS)
+
+lwip_fuzz_http: $(DEPFILES) $(LWIPLIBCOMMON) $(APPLIB) fuzz_http.o fuzz_common.o
+	$(CC) $(CFLAGS) -o lwip_fuzz_http fuzz_http.o fuzz_common.o $(APPLIB) $(LWIPLIBCOMMON) $(LDFLAGS)
